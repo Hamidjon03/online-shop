@@ -3,15 +3,23 @@ const path = require('path')
 const dotenv = require('dotenv')
 const exphbs = require('express-handlebars')
 const app = express()
+const connectDB = require('./config/db')
 
 // Env variables
 dotenv.config()
+
+// Connecting to database
+connectDB()
+
+// Body parser
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 // config static folder
 app.use(express.static(path.join(__dirname, 'public')))
 
 // config handlebars
-app.engine('.hbs', exphbs.engine({extname: '.hbs'}))
+app.engine('.hbs', exphbs.engine({ extname: '.hbs' }))
 app.set('view engine', '.hbs')
 
 
