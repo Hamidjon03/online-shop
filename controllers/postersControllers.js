@@ -1,4 +1,5 @@
 const Poster = require('../models/posterModel')
+const User = require('../models/userModel')
 
 //@route      GET /posters
 //@descr      Get posters page
@@ -20,9 +21,10 @@ const getPostersPage = async (req, res) => {
 //@descr      Get posters by id
 //access      Public
 const getPostersById = async (req, res) => {
-  const poster = await Poster.findByIdAndUpdate(req.params.id, {$inc: {visits: 1}}, {new: true}).lean()
+  const poster = await Poster.findByIdAndUpdate(req.params.id, { $inc: { visits: 1 } }, { new: true }).lean()
   res.render('poster/posterById', {
     title: 'Id: poster',
+    user: req.session.user,
     poster,
     url: process.env.URL
   })
@@ -44,15 +46,23 @@ const addNewPosterPage = (req, res) => {
 //access      Private
 const addNewPoster = async (req, res) => {
   try {
-    const { title, amount, region, image, description } = req.body
-    const poster = { 
-      title, 
-      amount, 
-      region, 
-      image: 'uploads/' + req.file.filename, 
-      description }
-    await Poster.create(poster)
-    return res.redirect('/posters')
+    const newPoster = new Poster({
+      title: req.body.title,
+      amount: req.body.amount,
+      region: req.body.region,
+      description: req.body.description,
+      image: 'uploads/' + req.file.filename
+    })
+
+    await User.findByIdAndUpdate(req.session.user._id,
+      { $push: { posters: newPoster._id } },
+      { new: true, upsert: true})
+
+    await newPoster.save((err, posterSaved) => {
+      if(err) throw err
+      const posterId = posterSaved._id
+      return res.redirect("/posters/" + posterId)
+    })
   } catch (err) {
     console.log(err);
   }

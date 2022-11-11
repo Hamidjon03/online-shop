@@ -1,4 +1,4 @@
-const {model, Schema} = require('mongoose')
+const { model, Schema } = require('mongoose')
 
 const userSchema = new Schema({
   email: {
@@ -21,7 +21,8 @@ const userSchema = new Schema({
     required: true,
     minLength: 6,
   },
-},{
+  posters: [{ type: Schema.Types.ObjectId, ref: 'Poster' }]
+}, {
   timestamps: true
 })
 
