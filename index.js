@@ -26,6 +26,7 @@ app.set('view engine', '.hbs')
 // Initialize routes
 app.use('/', require('./routes/homeRoutes'))
 app.use('/posters', require('./routes/postersRoutes'))
+app.use('/auth', require('./routes/authRoutes'))
 
 
 const PORT = process.env.PORT || 8000
