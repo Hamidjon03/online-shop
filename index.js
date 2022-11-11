@@ -43,6 +43,7 @@ app.set('view engine', '.hbs')
 app.use('/', require('./routes/homeRoutes'))
 app.use('/posters', require('./routes/postersRoutes'))
 app.use('/auth', require('./routes/authRoutes'))
+app.use('/profile', require('./routes/profileRoutes'))
 
 
 const PORT = process.env.PORT || 8000
