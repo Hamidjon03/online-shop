@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const connectDB = async () => {
-  const connecting = await mongoose.connect('mongodb://localhost:27017/olx', {
+  const connecting = await mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
   })
   console.log(`MongoDB connected to ${connecting.connection.host}`)
