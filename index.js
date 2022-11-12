@@ -3,6 +3,7 @@ const path = require('path')
 const dotenv = require('dotenv')
 const exphbs = require('express-handlebars')
 const app = express()
+const flash = require('connect-flash')
 const session = require('express-session')
 const MongoStore = require('connect-mongodb-session')(session)
 const connectDB = require('./config/db')
@@ -30,6 +31,10 @@ app.use(session({
   saveUninitialized: false,
   store
 }))
+
+// Initialize connect-flash
+app.use(flash())
+
 
 // config static folder
 app.use(express.static(path.join(__dirname, 'public')))
