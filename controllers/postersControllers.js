@@ -36,6 +36,7 @@ const getPostersById = async (req, res) => {
 const addNewPosterPage = (req, res) => {
   res.render('poster/add-poster', {
     title: 'Yangi e`lon qo`shish',
+    user: req.session.user,
     url: process.env.URL
 
   })
@@ -59,7 +60,7 @@ const addNewPoster = async (req, res) => {
       { new: true, upsert: true})
 
     await newPoster.save((err, posterSaved) => {
-      if(err) throw err
+      if (err) throw err
       const posterId = posterSaved._id
       return res.redirect("/posters/" + posterId)
     })
@@ -77,6 +78,7 @@ const getEditPosterPage = async (req, res) => {
     const poster = await Poster.findById(req.params.id).lean()
     res.render('poster/edit-poster', {
       poster,
+      user: req.session.user,
       url: process.env.URL
     })
   } catch (err) {

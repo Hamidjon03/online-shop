@@ -4,12 +4,15 @@ const {
   getLoginPage,
   getRegisterPage,
   registerNewUser,
-  loginUser
+  loginUser,
+  logout
  } = require('../controllers/authControllers')
+const { guest } = require('../middleware/auth')
 
-router.get('/login', getLoginPage)
-router.post('/login', loginUser)
-router.get('/signup', getRegisterPage)
-router.post('/signup', registerNewUser)
+router.get('/login', guest, getLoginPage)
+router.post('/login', guest, loginUser)
+router.post('/signup', guest, registerNewUser)
+router.get('/signup', guest, getRegisterPage)
+router.get('/logout', logout)
 
 module.exports = router
