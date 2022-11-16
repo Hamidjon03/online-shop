@@ -5,16 +5,21 @@ const User = require('../models/userModel')
 //access      Private
 const getProfilePage = async (req, res) => {
   try {
-    const user = await User
+    const userProfile = await User
       .findOne({username: req.params.username})
       .populate('posters')
       .lean()
-    if(!user) throw new Error('Bunday foydalanuvchi topilmadi')
-    // console.log(user.posters)
+    if(!userProfile) throw new Error('Bunday foydalanuvchi topilmadi')
+
+    const isMe = req.session.user._id.toString() == userProfile._id
+
+   
     return res.render('user/profile', {
-      title: `${user.username}`,
-      user,
-      posters: user.posters,
+      title: `${userProfile.username}`,
+      userProfile,
+      user: req.session.user,
+      isMe,
+      posters: userProfile.posters,
       isAuth: req.session.isLogged,
       url: process.env.URL
     })

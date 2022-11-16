@@ -21,10 +21,16 @@ const getPostersPage = async (req, res) => {
 //@descr      Get posters by id
 //access      Public
 const getPostersById = async (req, res) => {
-  const poster = await Poster.findByIdAndUpdate(req.params.id, { $inc: { visits: 1 } }, { new: true }).lean()
+  const poster = await Poster
+    .findByIdAndUpdate(req.params.id, { $inc: { visits: 1 } }, { new: true })
+    .populate('author')
+    .lean()
+
+    
   res.render('poster/posterById', {
     title: 'Id: poster',
     user: req.session.user,
+    author: poster.author,
     poster,
     url: process.env.URL
   })
@@ -45,14 +51,15 @@ const addNewPosterPage = (req, res) => {
 //@route      POST /posters/add
 //@descr      Poster add 
 //access      Private
-const addNewPoster = async (req, res) => {
+const addNewPoster = async (req, res) => {  
   try {
     const newPoster = new Poster({
       title: req.body.title,
       amount: req.body.amount,
       region: req.body.region,
       description: req.body.description,
-      image: 'uploads/' + req.file.filename
+      image: 'uploads/' + req.file.filename,
+      author: req.session.user._id
     })
 
     await User.findByIdAndUpdate(req.session.user._id,

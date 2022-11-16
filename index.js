@@ -2,6 +2,8 @@ const express = require('express')
 const path = require('path')
 const dotenv = require('dotenv')
 const exphbs = require('express-handlebars')
+const Handlebars = require("handlebars")
+const helpers = require('./utils/hbsHelpers')
 const app = express()
 const flash = require('connect-flash')
 const session = require('express-session')
@@ -23,6 +25,9 @@ const store = new MongoStore({
 // Body parser
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+
+// Register handlebars helper
+helpers(Handlebars)
 
 // Session configuration
 app.use(session({
