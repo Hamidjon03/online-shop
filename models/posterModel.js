@@ -26,6 +26,11 @@ const posterSchema = new Schema({
     type: Boolean,
     default: true
   },
+  category: {
+    type: String,
+    required: true,
+    enum: ['realty', 'transport', 'electronics', 'jobs']
+  },
   visits: {
     type: Number,
     default: 1

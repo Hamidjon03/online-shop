@@ -1,11 +1,22 @@
 const Poster = require('../models/posterModel')
 const User = require('../models/userModel')
+const filtering = require('../utils/filtering')
 
 //@route      GET /posters
 //@descr      Get posters page
 //access      Public
 const getPostersPage = async (req, res) => {
   try {
+
+    const pagelimit = 10
+    const limit = parseInt(req.query.limit)
+    const page = parseInt(req.query.page)
+    const total = await Poster.countDocuments()
+
+    // Redirect if queries [page, limit, ] doesn't exist
+    if(req.url === '/'){
+      return res.redirect(`?page=1&limit=${pagelimit}`)
+    }
 
     if(req.query.search){
       const {search} = req.query
@@ -22,10 +33,37 @@ const getPostersPage = async (req, res) => {
         posters: posters.reverse()
       })
     }
-    const posters = await Poster.find().lean()
-    res.render('poster/posters', {
-      title: 'Home page',
+
+
+    if (!req.query.limit || !req.query.page){
+      const {region, from, to, category} = req.query
+
+      const filterings = filtering(region, from, to, category)
+      const posters = await Poster.find(filterings).lean()
+
+      return res.render("poster/searchResults", {
+        title: 'Filter result',
+        user: req.session.user,
+        url: process.env.URL,
+        posters: posters.reverse()
+      })
+    }
+
+    const posters = await Poster
+      .find()
+      // .sort({createdAt: -1})
+      .skip((page * limit) - limit)
+      .limit(limit)
+      .lean()
+      // console.log(posters);
+    return res.render('poster/posters', {
+      title: 'Poster page',
       url: process.env.URL,
+      pagination: {
+        page,
+        limit,
+        pageCount: Math.ceil(total/limit)
+      },
       user: req.session.user,
       posters: posters.reverse()
     })
