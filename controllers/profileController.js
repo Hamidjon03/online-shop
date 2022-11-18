@@ -11,7 +11,10 @@ const getProfilePage = async (req, res) => {
       .lean()
     if(!userProfile) throw new Error('Bunday foydalanuvchi topilmadi')
 
-    const isMe = req.session.user._id.toString() == userProfile._id
+    let isMe = false;
+    if(req.session.user){
+      isMe = req.session.user._id.toString() == userProfile._id
+    }
 
    
     return res.render('user/profile', {
